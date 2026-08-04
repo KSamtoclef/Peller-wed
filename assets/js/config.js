@@ -1,5 +1,5 @@
 window.SITE_CONFIG = {
-  demoBanner: 'DEMO PREVIEW — FOR SETUP AND TESTING',
+  demoBanner: '',
   requiredShares: 8,
   minimumWhatsAppAwayMs: 3000,
   shareCooldownMs: 1500,
