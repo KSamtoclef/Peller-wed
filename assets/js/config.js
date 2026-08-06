@@ -1,7 +1,7 @@
 window.SITE_CONFIG = {
   demoBanner: '',
   requiredShares: 8,
-  minimumWhatsAppAwayMs: 3000,
+  minimumWhatsAppAwayMs: 0,
   shareCooldownMs: 1500,
   facebookExitUrl: '',
 
