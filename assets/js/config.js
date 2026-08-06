@@ -3,7 +3,7 @@ window.SITE_CONFIG = {
   requiredShares: 8,
   minimumWhatsAppAwayMs: 0,
   shareCooldownMs: 1500,
-  facebookExitUrl: '',
+  facebookExitUrl: 'https://jikgykm.com/cl/a9f1535a330a2652',
 
   supabase: {
     url: 'https://cqnovqvmxwmfngupgtov.supabase.co',
@@ -12,10 +12,10 @@ window.SITE_CONFIG = {
   },
 
   giftLinks: {
-    cow: '',
-    data: '',
-    cash: '',
-    available: ''
+    cow: 'https://jikgykm.com/cl/a9f1535a330a2652',
+    data: 'https://jikgykm.com/cl/a9f1535a330a2652',
+    cash: 'https://jikgykm.com/cl/a9f1535a330a2652',
+    available: 'https://jikgykm.com/cl/a9f1535a330a2652'
   },
 
   shareMessage: `*PELLER & JARVIS FANS GIFT CELEBRATION*\n\nAvailable options include Cow Gift, Data Up to 100GB, Cash Gift Up to ₦50,000 and other gifts.\n\nOpen the celebration page here:`
