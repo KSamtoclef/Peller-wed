@@ -1,7 +1,6 @@
 window.FAN_CONVERSATION = (() => {
   const previewActive =
     location.hostname === 'localhost' ||
-    location.hostname.endsWith('.vercel.app') ||
     new URLSearchParams(location.search).get('commentsPreview') === '1';
 
   const now = Date.now();
@@ -19,7 +18,7 @@ window.FAN_CONVERSATION = (() => {
     'Kelvin Udo','Zainab Ibrahim','Halima Musa','Benedict Oke','Oluwatobi Ajayi'
   ];
 
-  // These are fictional preview/test comments only. The UI labels the stream as DEMO.
+  // Fictional preview/test comments. These are enabled only in explicit preview mode.
   const seed = [
     ['Amina Yusuf','My cash gift just entered 😭❤️ Thank you Peller and Jarvis. God bless your new home.','',2,14],
     ['Tosin Adeyemi','Congratulations sis. I am still waiting for mine 🙏','Amina Yusuf',1.7,4],
