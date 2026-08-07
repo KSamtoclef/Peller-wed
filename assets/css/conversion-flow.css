@@ -1,0 +1,14 @@
+.hero{padding-bottom:18px}
+.hero-copy{margin-bottom:14px}
+.hero-cta{min-height:62px;font-size:17px;letter-spacing:.2px;box-shadow:0 10px 28px rgba(0,0,0,.18);margin-bottom:12px}
+.gift-choice-title{font-size:11px;font-weight:900;color:#ffe6a0;text-transform:uppercase;letter-spacing:.8px;margin:4px 0 9px}
+.offers.gift-choices{margin-top:0}
+.gift-choice{appearance:none;-webkit-appearance:none;width:100%;border:1px solid rgba(255,255,255,.18);color:#fff;text-align:left;padding:12px;border-radius:14px;background:rgba(255,255,255,.1);min-height:62px;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+.gift-choice:active{transform:scale(.985)}
+.gift-choice.selected{border-color:#ffe6a0;background:rgba(255,230,160,.18);box-shadow:0 0 0 2px rgba(255,230,160,.12) inset}
+.gift-choice b{display:block;font-size:12px;line-height:1.3}
+#formCard[hidden]{display:none!important}
+.selected-gift-summary{margin-top:11px;padding:11px 12px;border-radius:12px;background:#f3f7f5;color:#24493c;font-size:12px;font-weight:800}
+#formCard{scroll-margin-top:12px}
+#giftChoices{scroll-margin-top:12px}
+@media(max-width:360px){.hero-cta{min-height:58px;font-size:16px}.gift-choice{min-height:58px;padding:10px}}
